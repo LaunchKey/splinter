@@ -40,6 +40,9 @@ class BaseWebDriver(DriverAPI):
     def url(self):
         return self.driver.current_url
 
+    def get(self, url):
+        self.driver.get(url)
+
     def visit(self, url):
         self.connect(url)
         self.ensure_success_response()
