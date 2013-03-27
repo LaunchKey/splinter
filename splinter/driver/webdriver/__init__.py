@@ -199,6 +199,10 @@ class BaseWebDriver(DriverAPI):
                 return ElementList([self.element_class(element, self) for element in elements], find_by=find_by, query=query)
         return ElementList([], find_by=find_by, query=query)
 
+    def find_by_class(self, class_name):
+        from selenium.webdriver.common.by import By
+        return self.driver.find_elements(By.CLASS_NAME, class_name)
+
     def find_by_css(self, css_selector):
         return self.find_by(self.driver.find_elements_by_css_selector, css_selector, original_find='css', original_query=css_selector)
 
