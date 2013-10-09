@@ -5,16 +5,16 @@
 # license that can be found in the LICENSE file.
 
 # -*- coding: utf-8 -*-
+
 import argparse
 import sys
-
-try:
-    import unittest2 as unittest
-except ImportError, e:
-    import unittest
+import unittest
 
 from multiprocessing import Process
-from urllib import urlopen
+try:
+    from urllib import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 from tests import TESTS_ROOT
 from tests.fake_webapp import start_flask_app, EXAMPLE_APP
@@ -79,7 +79,7 @@ def get_modules(modules_str):
             module = __import__(name, fromlist='tests')
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            print 'Error importing module %s:' % name
+            print('Error importing module {}:'.format(name))
             import traceback
             traceback.print_exception(exc_type, exc_value, exc_traceback,
                                       file=sys.stdout)

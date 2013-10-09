@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 splinter authors. All rights reserved.
+# Copyright 2013 splinter authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
-import urllib
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import urllib
+import unittest
 
 from splinter import Browser
 from fake_webapp import EXAMPLE_APP
@@ -51,12 +48,12 @@ class RemoteBrowserTest(WebDriverTests, unittest.TestCase):
     def test_mouse_over(self):
         "Remote should not support mouseover"
         with self.assertRaises(NotImplementedError):
-            self.browser.find_by_id('visible').first.mouse_over()
+            self.browser.find_by_id('visible').mouse_over()
 
     def test_mouse_out(self):
         "Remote should not support mouseout"
         with self.assertRaises(NotImplementedError):
-            self.browser.find_by_id('visible').first.mouse_out()
+            self.browser.find_by_id('visible').mouse_out()
 
     def test_double_click(self):
         "Remote should not support double_click"

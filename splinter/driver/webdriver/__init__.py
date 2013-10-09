@@ -4,7 +4,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from __future__ import with_statement
+import tempfile
 import time
 import re
 from contextlib import contextmanager
@@ -233,7 +233,7 @@ class BaseWebDriver(DriverAPI):
         for name, value in field_values.items():
             elements = self.find_by_name(name)
             element = elements.first
-            if element['type'] == 'text' or element.tag_name == 'textarea':
+            if element['type'] in ['text', 'password'] or element.tag_name == 'textarea':
                 element.value = value
             elif element['type'] == 'checkbox':
                 if value:
@@ -248,7 +248,7 @@ class BaseWebDriver(DriverAPI):
                 element.find_by_value(value).first._element.click()
 
     def type(self, name, value, slowly=False):
-        element = self.driver.find_element_by_css_selector('input[name="%s"]' % name)
+        element = self.driver.find_element_by_css_selector('[name="%s"]' % name)
         if slowly:
             return TypeIterator(element, value)
         element.send_keys(value)
@@ -265,6 +265,15 @@ class BaseWebDriver(DriverAPI):
 
     def uncheck(self, name):
         self.find_by_name(name).first.uncheck()
+
+    def screenshot(self, name=None, suffix='.png'):
+
+        name = name or ''
+
+        (fd, filename) = tempfile.mkstemp(prefix=name, suffix=suffix)
+
+        self.driver.get_screenshot_as_file(filename)
+        return filename
 
     def select(self, name, value):
         self.find_by_xpath('//select[@name="%s"]/option[@value="%s"]' % (name, value)).first._element.click()

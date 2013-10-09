@@ -7,23 +7,23 @@
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from splinter.driver.webdriver import BaseWebDriver, WebDriverElement
-from splinter.driver.webdriver.cookie_manager import ChromeCookieManager
+from splinter.driver.webdriver.cookie_manager import CookieManager
 
 
 class WebDriver(BaseWebDriver):
 
     driver_name = "Chrome"
 
-    def __init__(self, user_agent=None, wait_time=2):
+    def __init__(self, user_agent=None, wait_time=2, **kwargs):
         options = Options()
 
         if user_agent is not None:
             options.add_argument("--user-agent=" + user_agent)
 
-        self.driver = Chrome(chrome_options=options)
+        self.driver = Chrome(chrome_options=options, **kwargs)
 
         self.element_class = WebDriverElement
 
-        self._cookie_manager = ChromeCookieManager(self.driver)
+        self._cookie_manager = CookieManager(self.driver)
 
         super(WebDriver, self).__init__(wait_time)

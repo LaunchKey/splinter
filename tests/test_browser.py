@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 splinter authors. All rights reserved.
+# Copyright 2013 splinter authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-
-from __future__ import with_statement
-
 import __builtin__
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from splinter.exceptions import DriverNotFoundError
 
 from fake_webapp import EXAMPLE_APP
+from test_webdriver_chrome import chrome_installed
+from test_webdriver_firefox import firefox_installed
 
 
 class BrowserTest(unittest.TestCase):
@@ -59,17 +54,13 @@ class BrowserTest(unittest.TestCase):
             from splinter import Browser
             Browser('unknown-driver')
 
+    @unittest.skipIf(not firefox_installed(), 'firefox is not installed')
     def test_firefox_should_be_able_to_change_user_agent(self):
         self.assertTrue(self.browser_can_change_user_agent('firefox'))
 
+    @unittest.skipIf(not chrome_installed(), 'chrome is not installed')
     def test_chrome_should_be_able_to_change_user_agent(self):
         self.assertTrue(self.browser_can_change_user_agent('chrome'))
 
     def test_zope_testbrowser_should_be_able_to_change_user_agent(self):
         self.assertTrue(self.browser_can_change_user_agent('zope.testbrowser'))
-
-    def test_should_support_with_statement(self):
-        for browser in ('firefox', 'chrome', 'zope.testbrowser'):
-            from splinter import Browser
-            with Browser(browser) as internet:
-                pass

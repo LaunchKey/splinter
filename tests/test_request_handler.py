@@ -5,11 +5,9 @@
 # license that can be found in the LICENSE file.
 
 import os
+import unittest
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+from ssl import SSLError
 
 from fake_webapp import EXAMPLE_APP
 from splinter.request_handler.request_handler import RequestHandler
@@ -27,7 +25,7 @@ class RequestHandlerTestCase(unittest.TestCase):
         self.assertTrue(self.request.status_code.is_success())
 
     def test_should_start_a_request_with_localhost(self):
-        self.assertEqual("localhost", self.request.host)
+        self.assertEqual("127.0.0.1", self.request.host)
 
     def test_should_start_a_request_with_port_5000(self):
         self.assertEqual(5000, self.request.port)
@@ -77,8 +75,23 @@ class RequestHandlerTestCase(unittest.TestCase):
         request.connect(url)
         self.assertTrue(request.status_code.is_success())
 
+    def test_should_connect_to_https_protocols(self):
+        # We do not run an HTTPS server, but we know we handle https
+        # if we get an SSLError accessing a non-HTTPS site.
+        with self.assertRaises(SSLError):
+            request = RequestHandler()
+            url = EXAMPLE_APP.replace('http', 'https')
+            request.connect(url)
+            self.assertEqual(request.scheme, 'https')
+
     def test_should_set_user_agent(self):
         request = RequestHandler()
         url = EXAMPLE_APP + 'useragent'
         request.connect(url)
         self.assertEqual('python/splinter', request.response.read())
+
+    def test_should_be_able_to_connect_with_basic_auth(self):
+        request = RequestHandler()
+        url = 'http://admin:secret@localhost:5000/authenticate'
+        request.connect(url)
+        self.assertEqual('Success!', request.response.read())

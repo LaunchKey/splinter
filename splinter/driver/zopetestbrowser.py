@@ -4,7 +4,6 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from __future__ import with_statement
 import re
 
 from lxml.cssselect import CSSSelector
@@ -39,6 +38,9 @@ class CookieManager(CookieManagerAPI):
         else:
             self._cookies.clearAll()
 
+    def all(self):
+        return self._cookies.items()
+
     def __getitem__(self, item):
         return self._cookies[item]
 
@@ -51,7 +53,8 @@ class ZopeTestBrowser(DriverAPI):
 
     driver_name = "zope.testbrowser"
 
-    def __init__(self, user_agent=None):
+    def __init__(self, user_agent=None, wait_time=2):
+        self.wait_time = wait_time
         mech_browser = self._get_mech_browser(user_agent)
         self._browser = Browser(mech_browser=mech_browser)
 
@@ -170,7 +173,7 @@ class ZopeTestBrowser(DriverAPI):
         for name, value in field_values.items():
             element = self.find_by_name(name)
             control = element.first._control
-            if control.type in ['text', 'textarea']:
+            if control.type in ['text', 'textarea', 'password']:
                 control.value = value
             elif control.type == 'checkbox':
                 if value:
@@ -209,7 +212,7 @@ class ZopeTestBrowser(DriverAPI):
         self.find_by_name(name).first._control.value = [value]
 
     def is_text_present(self, text, wait_time=None):
-        wait_time = wait_time or 2
+        wait_time = wait_time or self.wait_time
         end_time = time.time() + wait_time
 
         while time.time() < end_time:
@@ -228,7 +231,7 @@ class ZopeTestBrowser(DriverAPI):
             return False
 
     def is_text_not_present(self, text, wait_time=None):
-        wait_time = wait_time or 2
+        wait_time = wait_time or self.wait_time
         end_time = time.time() + wait_time
 
         while time.time() < end_time:
