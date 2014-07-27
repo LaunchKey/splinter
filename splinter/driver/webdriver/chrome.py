@@ -14,8 +14,12 @@ class WebDriver(BaseWebDriver):
 
     driver_name = "Chrome"
 
-    def __init__(self, user_agent=None, wait_time=2, **kwargs):
+    def __init__(self, user_agent=None, wait_time=2, sandbox=False, **kwargs):
         options = Options()
+        
+        if sandbox is False:
+            #This gets past the issues of getting ChromeDriver to run in a Docker
+            options.add_argument("--no-sandbox")
 
         if user_agent is not None:
             options.add_argument("--user-agent=" + user_agent)
